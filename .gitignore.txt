@@ -1,0 +1,7 @@
+*/migrations/
+.env
+settings.py
+db.sqlite3
+media/
+static/
+logs/
