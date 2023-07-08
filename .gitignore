@@ -1,6 +1,6 @@
 */migrations/
 .env
-settings.py
+/CertiPro/settings.py
 db.sqlite3
 media/
 static/
