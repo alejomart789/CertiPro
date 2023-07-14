@@ -18,4 +18,6 @@ def usuarioLogin(request):
 
 def usuarioInicio(request, usuario):
     
-    return render(request, "usuarios/index.html")
+    usuario = request.user
+    
+    return render(request, "usuarios/index.html", {'usuario': usuario})
