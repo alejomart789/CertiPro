@@ -20,6 +20,8 @@
 
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="{% static 'css/administradores/style.css' %}" rel="stylesheet">
 
 </head>
 
@@ -61,14 +63,21 @@
             <li class="nav-item">
                 <a class="nav-link" href="charts.html">
                     <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Mis actualizaciones</span></a>
+                    <span>Usuarios</span></a>
             </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="tables.html">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Certificados</span></a>
+                    <span>Actualizaciones</span></a>
+            </li>
+
+            <!-- Nav Item - Tables -->
+            <li class="nav-item">
+                <a class="nav-link" href="tables.html">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Solicitud de certificados</span></a>
             </li>
 
             <!-- Divider -->
@@ -78,14 +87,6 @@
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
-
-            <!-- Sidebar Message -->
-            <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="img/undraw_rocket.svg" alt="...">
-                <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
-                <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
-            </div>
-
         </ul>
         <!-- End of Sidebar -->
 
@@ -307,14 +308,19 @@
                             <!-- Primera tarjeta -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Aviso</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Actualizaciones</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="text-center">
-                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="img/undraw_posting_photo.svg" alt="...">
-                                    </div>
-                                    <p>Agrega ilustraciones SVG de calidad a tu proyecto cortesía de <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, una colección constantemente actualizada de hermosas imágenes SVG que puedes usar de forma gratuita y sin atribución.</p>
-                                    <a target="_blank" rel="nofollow" href="https://undraw.co/">Explorar ilustraciones en unDraw &rarr;</a>
+                                    <p>Controle todo para las actualizaciones de los usuarios</p>
+                                    <h1>Configuración de Actualización</h1>
+                                    <form id="actualizacionForm" method="post" action="{% url 'administradores:actualizacion' %}">
+                                        {% csrf_token %}
+                                        <!-- Utilizamos el operador ternario para establecer el estado del checkbox -->
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="switchActualizacion" name="activada" {% if administrador.actualizacion %}checked{% endif %}>
+                                            <label class="custom-control-label" for="switchActualizacion">{% if administrador.actualizacion %}Activado{% else %}Apagado{% endif %}</label>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -322,11 +328,39 @@
                             <!-- Segunda tarjeta -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Development Approach</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Agregar o quitar preguntas</h6>
                                 </div>
                                 <div class="card-body">
-                                    <p>SB Admin 2 hace un uso extensivo de las clases de utilidad de Bootstrap 4 para reducir el peso del CSS y mejorar el rendimiento de las páginas. Se utilizan clases CSS personalizadas para crear componentes personalizados y clases de utilidad personalizadas.</p>
-                                    <p class="mb-0">Antes de trabajar con este tema, deberías familiarizarte con el framework de Bootstrap, especialmente con las clases de utilidad.</p>
+                                    <p>Agregue preguntas al formulario de actualizacion para los usuarios</p>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAgregarPregunta">Agregar Pregunta</button>
+
+                                    <!-- Agregar Pregunta Modal -->
+                                    <div class="modal fade" id="modalAgregarPregunta" tabindex="-1" role="dialog" aria-labelledby="modalAgregarPreguntaLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <!-- ... (resto del contenido del modal) ... -->
+                                                <div class="modal-body">
+                                                    <form id="agregarPreguntaForm" method="post" action="{% url 'administradores:agregar_pregunta' %}">
+                                                        {% csrf_token %}
+                                                        <div class="form-group">
+                                                            <label for="pregunta">Ingrese la pregunta:</label>
+                                                            <input type="text" class="form-control" id="pregunta" name="pregunta">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="tipo">Seleccione el tipo de la pregunta:</label>
+                                                            <select class="form-control" id="tipo" name="tipo">
+                                                                {% for tipo, label in tipos_pregunta %}
+                                                                <option value="{{ tipo }}">{{ label }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary">Agregar</button>
+                                                    </form>
+                                                    <div id="agregarPreguntaMessage"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -335,24 +369,71 @@
                 </div>
                 <!-- /.container-fluid -->
 
-                <h2>Responder Preguntas</h2>
-                <form method="post">
-                    {% csrf_token %}
-                    {% for pregunta in preguntas %}
-                        <label>{{ pregunta.pregunta }}</label><br>
-                        {% if pregunta.tipo == 'text' %}
-                            <input type="text" name="pregunta_{{ pregunta.id }}"><br><br>
-                        {% elif pregunta.tipo == 'number' %}
-                            <input type="number" name="pregunta_{{ pregunta.id }}"><br><br>
-                        {% elif pregunta.tipo == 'radio' %}
-                            <!-- Aquí puedes agregar el código para mostrar opciones de radio -->
-                        {% elif pregunta.tipo == 'checkbox' %}
-                            <!-- Aquí puedes agregar el código para mostrar casillas de verificación -->
-                        {% endif %}
-                    {% endfor %}
-                    <button type="submit">Enviar Respuestas</button>
-                </form>
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <h2 class="text-center mb-4">Preguntas existentes</h2>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Pregunta</th>
+                                        <th>Tipo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pregunta in preguntas %}
+                                    <tr>
+                                        <td>{{ pregunta.pregunta }}</td>
+                                        <td>{{ pregunta.get_tipo_display }}</td>
+                                        <td>
+                                            <button class="btn btn-warning editar-pregunta-btn"
+                                                    data-id="{{ pregunta.pk }}"
+                                                    data-pregunta="{{ pregunta.pregunta }}"
+                                                    data-tipo="{{ pregunta.tipo }}">Editar</button>
+                                            <a href="{% url 'administradores:borrar_pregunta' pregunta.pk %}" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Eliminar</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Modal Editar Pregunta -->
+                <div class="modal fade" id="modalEditarPregunta" tabindex="-1" role="dialog" aria-labelledby="modalEditarPreguntaLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalEditarPreguntaLabel">Editar Pregunta</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editarPreguntaForm" method="post" action="">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="preguntaId" name="preguntaId">
+                                    <div class="form-group">
+                                        <label for="preguntaEditar">Editar la pregunta:</label>
+                                        <input type="text" class="form-control" id="preguntaEditar" name="preguntaEditar">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tipoEditar">Editar el tipo de la pregunta:</label>
+                                        <select class="form-control" id="tipoEditar" name="tipoEditar">
+                                            {% for tipo, label in tipos_pregunta %}
+                                            <option value="{{ tipo }}">{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                </form>
+                                <div id="editarPreguntaMessage"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
             </div>
             <!-- End of Main Content -->
 
@@ -360,7 +441,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        <span>Copyright &copy; CertiPro 2023</span>
                     </div>
                 </div>
             </footer>
@@ -414,6 +495,17 @@
     <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
     <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
 
+    <script src="{% static 'js/administradores/scripts.js' %}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <script>
+        var editarPreguntaURL = "{% url 'administradores:editar_pregunta' 0 %}".replace("0", "");
+    </script>
 </body>
 
 </html>
